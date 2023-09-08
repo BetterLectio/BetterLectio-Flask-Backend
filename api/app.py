@@ -50,12 +50,11 @@ def auth():
         adgangskode = request.headers.get('adgangskode')
         skoleId = request.headers.get('skoleid')
 
-        return jsonify([brugernavn, adgangskode, skoleId])
-
         lectioClient = lectio.sdk(brugernavn=brugernavn, adgangskode=adgangskode, skoleId=skoleId)
         resp = make_response(jsonify({"success": True}))
         resp.headers["set-lectio-cookie"] = lectioClient.base64Cookie()
         resp.headers["Access-Control-Expose-Headers"] = "set-lectio-cookie"
+        return jsonify({"cookie_test": lectioClient.base64Cookie()})
         return resp
     except Exception:
         return jsonify({"success": False, "backend_error": traceback.format_exc()}), 500
@@ -239,6 +238,7 @@ def result():
 @app.route('/informationer') 
 @cache_for(minutes=10080) # 1 week 
 def informationer():
+    return []
     try:
         cookie = request.headers.get("lectio-cookie")
 
