@@ -50,6 +50,8 @@ def auth():
         adgangskode = request.headers.get('adgangskode')
         skoleId = request.headers.get('skoleid')
 
+        return jsonify([brugernavn, adgangskode, skoleId])
+
         lectioClient = lectio.sdk(brugernavn=brugernavn, adgangskode=adgangskode, skoleId=skoleId)
         resp = make_response(jsonify({"success": True}))
         resp.headers["set-lectio-cookie"] = lectioClient.base64Cookie()
