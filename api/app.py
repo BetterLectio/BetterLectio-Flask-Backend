@@ -205,7 +205,7 @@ def beskeder2():
         lectioClient = lectio.sdk(brugernavn=None, adgangskode=None, skoleId=None, base64Cookie=cookie)
 
         beskeder = []
-        for id in [-20, -30, -35, -10]:
+        for id in [-70]: # [-20, -30, -35, -10] Midlertidigt fix, dette skal gøres lokalt
             for besked in lectioClient.beskeder(id=id)["beskeder"]:
                 if besked not in beskeder:
                     beskeder.append(besked)
