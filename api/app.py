@@ -165,6 +165,20 @@ def modul():
         return resp
     except Exception:
         return jsonify({"backend_error": traceback.format_exc()}), 500
+@app.route('/modulHtml')
+def modulHtml():
+    try:
+        cookie = request.headers.get("lectio-cookie")
+        absid = request.args.get("absid")
+
+        lectioClient = lectio.sdk(brugernavn=None, adgangskode=None, skoleId=None, base64Cookie=cookie)
+
+        resp = make_response(jsonify(lectioClient.modulHtml(absid=absid)))
+        resp.headers["set-lectio-cookie"] = lectioClient.base64Cookie()
+        resp.headers["Access-Control-Expose-Headers"] = "set-lectio-cookie"
+        return resp
+    except Exception:
+        return jsonify({"backend_error": traceback.format_exc()}), 500
 
 @app.route('/besked')
 def besked():
