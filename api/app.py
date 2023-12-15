@@ -622,7 +622,7 @@ def dokumentUpload():
         return jsonify({"backend_error": traceback.format_exc()}), 500
 
 @app.route("/dokument_hent")
-@cache_for(hours=1)
+@cache_for(days=1)
 def dokumentHent():
     try:
         cookie = request.headers.get("lectio-cookie")
