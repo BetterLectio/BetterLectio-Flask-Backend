@@ -583,5 +583,63 @@ def forløb():
     except Exception:
         return jsonify({"backend_error": traceback.format_exc()}), 500
 
+@app.route("/opret_mappe", methods=["POST"])
+def opretMappe():
+    try:
+        cookie = request.headers.get("lectio-cookie")
+        folderName = request.json.get('folderName')
+        folderComment = request.json.get('folderComment')
+        folderId = request.json.get('folderId')
+
+        lectioClient = lectio.sdk(brugernavn=None, adgangskode=None, skoleId=None, base64Cookie=cookie)
+
+        resp = make_response(jsonify(lectioClient.opretMappe(folderName, folderComment, folderId)))
+        resp.headers["set-lectio-cookie"] = lectioClient.base64Cookie()
+        resp.headers["Access-Control-Expose-Headers"] = "set-lectio-cookie"
+        return resp
+    except Exception:
+        return jsonify({"backend_error": traceback.format_exc()}), 500
+
+@app.route("/dokument_upload", methods=["POST"])
+def dokumentUpload():
+    try:
+        cookie = request.headers.get("lectio-cookie")
+        fileName = request.json.get('fileName')
+        folderId = request.json.get('folderId')
+        contentType = request.json.get('contentType')
+        content = request.json.get('content')
+        fileComment = request.json.get('fileComment')
+        public = request.json.get('public')
+        documentId = request.json.get('documentId')
+
+        lectioClient = lectio.sdk(brugernavn=None, adgangskode=None, skoleId=None, base64Cookie=cookie)
+
+        resp = make_response(jsonify(lectioClient.dokumentUpload(fileName, folderId, contentType, content, fileComment, public, documentId)))
+        resp.headers["set-lectio-cookie"] = lectioClient.base64Cookie()
+        resp.headers["Access-Control-Expose-Headers"] = "set-lectio-cookie"
+        return resp
+    except Exception:
+        return jsonify({"backend_error": traceback.format_exc()}), 500
+
+@app.route("/dokument_hent")
+@cache_for(hours=1)
+def dokumentHent():
+    try:
+        cookie = request.headers.get("lectio-cookie")
+        id = request.args.get("id")
+        raw = request.args.get("raw")
+
+        lectioClient = lectio.sdk(brugernavn=None, adgangskode=None, skoleId=None, base64Cookie=cookie)
+        _resp = lectioClient.dokumentHent(id)
+        resp = make_response(_resp["content"])
+        if not raw or raw == "true":
+            resp.headers["Content-Type"] = _resp["content-type"]
+            resp.headers["Content-Disposition"] = _resp["content-disposition"]
+        resp.headers["set-lectio-cookie"] = lectioClient.base64Cookie()
+        resp.headers["Access-Control-Expose-Headers"] = "set-lectio-cookie"
+        return resp
+    except Exception:
+        return jsonify({"backend_error": traceback.format_exc()}), 500
+
 if __name__ == '__main__':
     app.run()
