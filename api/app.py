@@ -641,5 +641,20 @@ def dokumentHent():
     except Exception:
         return jsonify({"backend_error": traceback.format_exc()}), 500
 
+@app.route("/hold_medlemmer")
+@cache_for(days=7)
+def holdMedlemmer():
+    try:
+        cookie = request.headers.get("lectio-cookie")
+        id = request.args.get("id")
+
+        lectioClient = lectio.sdk(brugernavn=None, adgangskode=None, skoleId=None, base64Cookie=cookie)
+        resp = make_response(lectioClient.fåHoldMedlemmer(id))
+        resp.headers["set-lectio-cookie"] = lectioClient.base64Cookie()
+        resp.headers["Access-Control-Expose-Headers"] = "set-lectio-cookie"
+        return resp
+    except Exception:
+        return jsonify({"backend_error": traceback.format_exc()}), 500
+
 if __name__ == '__main__':
     app.run()
