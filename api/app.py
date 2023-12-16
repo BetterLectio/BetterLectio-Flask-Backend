@@ -626,6 +626,7 @@ def dokumentUpload():
 def dokumentHent():
     try:
         cookie = request.headers.get("lectio-cookie")
+        contentType = request.headers.get("content-type")
         id = request.args.get("id")
         doctype = request.args.get("doctype")
         raw = request.args.get("raw")
@@ -634,7 +635,7 @@ def dokumentHent():
         _resp = lectioClient.dokumentHent(id, doctype)
         resp = make_response(_resp["content"])
         if not raw or raw == "true":
-            resp.headers["Content-Type"] = _resp["content-type"]
+            resp.headers["Content-Type"] = contentType if contentType else _resp["content-type"]
             resp.headers["Content-Disposition"] = _resp["content-disposition"]
         resp.headers["set-lectio-cookie"] = lectioClient.base64Cookie()
         resp.headers["Access-Control-Expose-Headers"] = "set-lectio-cookie"
