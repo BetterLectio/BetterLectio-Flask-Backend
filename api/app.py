@@ -627,10 +627,11 @@ def dokumentHent():
     try:
         cookie = request.headers.get("lectio-cookie")
         id = request.args.get("id")
+        doctype = request.args.get("doctype")
         raw = request.args.get("raw")
 
         lectioClient = lectio.sdk(brugernavn=None, adgangskode=None, skoleId=None, base64Cookie=cookie)
-        _resp = lectioClient.dokumentHent(id)
+        _resp = lectioClient.dokumentHent(id, doctype)
         resp = make_response(_resp["content"])
         if not raw or raw == "true":
             resp.headers["Content-Type"] = _resp["content-type"]
