@@ -1,4 +1,4 @@
-python-lectio>=1.23.0
+python-lectio>=1.30.2
 flask
 flask-cors
 Flask-CacheControl
